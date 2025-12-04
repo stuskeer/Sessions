@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About - Session Tracker</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Top right hamburger menu -->
+    <div style="position: absolute; top: 1rem; right: 1rem; z-index: 100;">
+      <button id="hamburger-btn" style="background: var(--bg-card); border: 1px solid var(--border); padding: 0.7rem; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; width: 40px; height: 40px; justify-content: center; align-items: center;">
+        <span style="display: block; width: 20px; height: 2px; background: var(--text-primary); transition: 0.3s;"></span>
+        <span style="display: block; width: 20px; height: 2px; background: var(--text-primary); transition: 0.3s;"></span>
+        <span style="display: block; width: 20px; height: 2px; background: var(--text-primary); transition: 0.3s;"></span>
+      </button>
+      
+      <!-- Dropdown menu -->
+      <div id="menu-dropdown" style="display: none; position: absolute; top: 50px; right: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; min-width: 180px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+        <button id="sessions-btn" style="width: 100%; padding: 0.8rem 1rem; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; border-bottom: 1px solid var(--border); border-radius: 12px 12px 0 0;">
+          <span style="font-size: 1.2em;">📊</span> Sessions
+        </button>
+        <button id="insights-btn" style="width: 100%; padding: 0.8rem 1rem; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; border-bottom: 1px solid var(--border);">
+          <span style="font-size: 1.2em;">📈</span> Insights
+        </button>
+        <button id="settings-btn" style="width: 100%; padding: 0.8rem 1rem; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; border-radius: 0 0 12px 12px;">
+          <span style="font-size: 1.2em;">⚙️</span> Settings
+        </button>
+      </div>
+    </div>
+    
+    <div class="container">
+      <h1>ℹ️ About Session Tracker</h1>
+      
+      <div style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
+        <h2 style="margin-top: 0; color: var(--text-primary);">Welcome to Kitesurf Session Tracker</h2>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          A web-based application designed for tracking and analyzing your kitesurfing sessions. 
+          Built for personal use with no login required - all your data is stored locally in a SQLite database.
+        </p>
+      </div>
+
+      <!-- Getting Started -->
+      <div style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
+        <h2 style="margin-top: 0; color: var(--text-primary);">🚀 Getting Started</h2>
+        
+        <h3 style="color: var(--text-primary); margin-top: 1.5rem;">1. Initial Setup</h3>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          Before logging your first session, navigate to <strong>Settings</strong> (hamburger menu ☰ → Settings) and add:
+        </p>
+        <ul style="color: var(--text-secondary); line-height: 1.8; margin-left: 1.5rem;">
+          <li><strong>Your Kites</strong>: Add all kites in your quiver (e.g., "Duotone Rebel 9m")</li>
+          <li><strong>Your Boards</strong>: Add your boards (e.g., "Cabrinha Spectrum 138cm")</li>
+          <li><strong>Your Locations</strong>: Add your favorite kite spots (e.g., "Rest Bay")</li>
+          <li><strong>Preferred Units</strong>: Set your wind speed and max speed units</li>
+        </ul>
+
+        <h3 style="color: var(--text-primary); margin-top: 1.5rem;">2. Logging Sessions</h3>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          On the <strong>Sessions</strong> page (main page), click "➕ Add Session" to expand the form:
+        </p>
+        <ul style="color: var(--text-secondary); line-height: 1.8; margin-left: 1.5rem;">
+          <li><strong>Required fields</strong>: Location, Date, Kite, Board, Session Type, Duration (HH:MM)</li>
+          <li><strong>Optional fields</strong>: Max jump height, Wind speed, Wind direction, Max speed, Max jump distance, Max airtime</li>
+        </ul>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          Click <strong>"Add Session"</strong> to save. Your new session will appear in the table below.
+        </p>
+
+        <h3 style="color: var(--text-primary); margin-top: 1.5rem;">3. Managing Sessions</h3>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          Click <strong>"Fetch Sessions"</strong> to load all your sessions into the table. You can:
+        </p>
+        <ul style="color: var(--text-secondary); line-height: 1.8; margin-left: 1.5rem;">
+          <li><strong>Filter</strong>: Type in the filter box to search across all columns</li>
+          <li><strong>Sort</strong>: Click column headers to sort by date, duration, wind speed, jump height, etc.</li>
+          <li><strong>Edit</strong>: Click the "Edit" button on any session to modify details</li>
+          <li><strong>Delete</strong>: Click the "Delete" button to remove a session (with confirmation)</li>
+        </ul>
+      </div>
+
+      <!-- Features Overview -->
+      <div style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
+        <h2 style="margin-top: 0; color: var(--text-primary);">✨ Features</h2>
+        
+        <h3 style="color: var(--text-primary); margin-top: 1.5rem;">📊 Sessions Page</h3>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          Your main dashboard for viewing and managing all kitesurfing sessions. Features a comprehensive table 
+          with filtering and sorting capabilities, plus forms for adding and editing sessions.
+        </p>
+
+        <h3 style="color: var(--text-primary); margin-top: 1.5rem;">📈 Insights Page</h3>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          Visualize your kiting statistics with:
+        </p>
+        <ul style="color: var(--text-secondary); line-height: 1.8; margin-left: 1.5rem;">
+          <li><strong>Key Statistics Cards</strong>: Highest jump, total sessions, total time on water</li>
+          <li><strong>Time by Kite Chart</strong>: Pie chart showing which kites you use most</li>
+          <li><strong>Sessions by Location</strong>: Clickable location breakdown with detailed statistics</li>
+          <li><strong>Interactive Details</strong>: Click on highest jump or locations to see detailed information</li>
+        </ul>
+
+        <h3 style="color: var(--text-primary); margin-top: 1.5rem;">⚙️ Settings Page</h3>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          Customize your experience:
+        </p>
+        <ul style="color: var(--text-secondary); line-height: 1.8; margin-left: 1.5rem;">
+          <li><strong>Manage Quiver</strong>: Add/remove kites from your collection</li>
+          <li><strong>Manage Boards</strong>: Add/remove boards from your collection</li>
+          <li><strong>Manage Locations</strong>: Add/remove your favorite kite spots</li>
+          <li><strong>Wind Speed Unit</strong>: Choose between Knots, Beaufort, m/s, km/h, or mph</li>
+          <li><strong>Max Speed Unit</strong>: Choose between mph, km/h, or m/s</li>
+        </ul>
+      </div>
+
+      <!-- Session Types -->
+      <div style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
+        <h2 style="margin-top: 0; color: var(--text-primary);">🪁 Session Types</h2>
+        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+          Track different types of kiting sessions:
+        </p>
+        <ul style="color: var(--text-secondary); line-height: 1.8; margin-left: 1.5rem;">
+          <li><strong>Freeride</strong>: Casual riding and cruising</li>
+          <li><strong>Freestyle</strong>: Tricks and technical moves</li>
+          <li><strong>Big Air</strong>: Focused on maximum jump height</li>
+          <li><strong>Wave</strong>: Wave riding and surfing</li>
+        </ul>
+      </div>
+
+      <!-- Tips -->
+      <div style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
+        <h2 style="margin-top: 0; color: var(--text-primary);">💡 Tips</h2>
+        <ul style="color: var(--text-secondary); line-height: 1.8; margin-left: 1.5rem;">
+          <li>Add your gear in Settings before logging your first session</li>
+          <li>Use the filter box on the Sessions page to quickly find specific sessions</li>
+          <li>Click on your highest jump card in Insights to see full session details</li>
+          <li>Click on any location in Insights to view detailed statistics for that spot</li>
+          <li>Duration format is HH:MM (e.g., "02:30" for 2 hours 30 minutes)</li>
+          <li>All data is stored locally - no internet connection needed after initial setup</li>
+        </ul>
+      </div>
+
+      <!-- Developer Info -->
+      <div style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem; margin-bottom: 2rem;">
+        <h2 style="margin-top: 0; color: var(--text-primary);">👨‍💻 Developer</h2>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          <strong>Developed by:</strong> Stuart Skeer
+        </p>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          <strong>Version:</strong> 1.0.0
+        </p>
+        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0;">
+          <strong>Released:</strong> December 2025
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Hamburger menu toggle
+      const hamburgerBtn = document.getElementById('hamburger-btn');
+      const menuDropdown = document.getElementById('menu-dropdown');
+      
+      hamburgerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menuDropdown.style.display = menuDropdown.style.display === 'none' ? 'block' : 'none';
+      });
+      
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!hamburgerBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
+          menuDropdown.style.display = 'none';
+        }
+      });
+
+      // Navigation buttons
+      document.getElementById('sessions-btn').addEventListener('click', () => {
+        window.location.href = 'index.html';
+      });
+
+      document.getElementById('insights-btn').addEventListener('click', () => {
+        window.location.href = 'insights.html';
+      });
+
+      document.getElementById('settings-btn').addEventListener('click', () => {
+        window.location.href = 'settings.html';
+      });
+    </script>
+  </body>
+</html>

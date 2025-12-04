@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - Session Tracker</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Top right hamburger menu -->
+    <div style="position: absolute; top: 1rem; right: 1rem; z-index: 100;">
+      <button id="hamburger-btn" style="background: var(--bg-card); border: 1px solid var(--border); padding: 0.7rem; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; width: 40px; height: 40px; justify-content: center; align-items: center;">
+        <span style="display: block; width: 20px; height: 2px; background: var(--text-primary); transition: 0.3s;"></span>
+        <span style="display: block; width: 20px; height: 2px; background: var(--text-primary); transition: 0.3s;"></span>
+        <span style="display: block; width: 20px; height: 2px; background: var(--text-primary); transition: 0.3s;"></span>
+      </button>
+      
+      <!-- Dropdown menu -->
+      <div id="menu-dropdown" style="display: none; position: absolute; top: 50px; right: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; min-width: 180px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+        <button id="sessions-btn" style="width: 100%; padding: 0.8rem 1rem; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; border-bottom: 1px solid var(--border); border-radius: 12px 12px 0 0;">
+          <span style="font-size: 1.2em;">📊</span> Sessions
+        </button>
+        <button id="insights-btn" style="width: 100%; padding: 0.8rem 1rem; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; border-bottom: 1px solid var(--border);">
+          <span style="font-size: 1.2em;">📈</span> Insights
+        </button>
+        <button id="about-btn" style="width: 100%; padding: 0.8rem 1rem; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; border-radius: 0 0 12px 12px;">
+          <span style="font-size: 1.2em;">ℹ️</span> About
+        </button>
+      </div>
+    </div>
+    
+    <div class="container">
+      <h1>⚙️ Settings</h1>
+      
+      <!-- Manage Quiver Section -->
+      <div style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
+        <h2 style="margin-top: 0; color: var(--text-primary);">🪁 Manage Quiver</h2>
+        
+        <!-- Add Kite Form -->
+        <form id="add-kite-form" style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
+          <input type="text" id="new-kite" name="kiteName" placeholder="e.g., North Reach 11m" required style="flex: 1;" />
+          <button type="submit" style="padding: 0.75rem 1.5rem;">Add Kite</button>
+        </form>
+        <div id="kite-add-message" style="margin-bottom: 1rem;"></div>
+
+        <!-- Kites List -->
+        <div id="quiver-list">
+          <p style="color: var(--text-muted);">Loading quiver...</p>
+        </div>
+      </div>
+
+      <!-- Manage Locations Section -->
+      <div style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
+        <h2 style="margin-top: 0; color: var(--text-primary);">📍 Manage Locations</h2>
+        
+        <!-- Add Location Form -->
+        <form id="add-location-form" style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
+          <input type="text" id="new-location" name="locationName" placeholder="e.g., Rest Bay" required style="flex: 1;" />
+          <button type="submit" style="padding: 0.75rem 1.5rem;">Add Location</button>
+        </form>
+        <div id="location-add-message" style="margin-bottom: 1rem;"></div>
+
+        <!-- Locations List -->
+        <div id="locations-list">
+          <p style="color: var(--text-muted);">Loading locations...</p>
+        </div>
+      </div>
+
+      <!-- Manage Boards Section -->
+      <div style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
+        <h2 style="margin-top: 0; color: var(--text-primary);">🏄 Manage Boards</h2>
+        
+        <!-- Add Board Form -->
+        <form id="add-board-form" style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
+          <input type="text" id="new-board" name="boardName" placeholder="e.g., Cabrinha Spectrum 138cm" required style="flex: 1;" />
+          <button type="submit" style="padding: 0.75rem 1.5rem;">Add Board</button>
+        </form>
+        <div id="board-add-message" style="margin-bottom: 1rem;"></div>
+
+        <!-- Boards List -->
+        <div id="boards-list">
+          <p style="color: var(--text-muted);">Loading boards...</p>
+        </div>
+      </div>
+
+      <!-- Wind Speed Unit Section -->
+      <div style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
+        <h2 style="margin-top: 0; color: var(--text-primary);">💨 Wind Speed Unit</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Choose how wind speed is displayed throughout the app</p>
+        
+        <form id="wind-unit-form" style="display: flex; flex-direction: column; gap: 1rem;">
+          <select id="wind-unit-select" name="windUnit" style="padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-primary); font-size: 1rem;">
+            <option value="kts">Knots (kts)</option>
+            <option value="bft">Beaufort (Bft)</option>
+            <option value="ms">Meters per second (m/s)</option>
+            <option value="kmh">Kilometers per hour (km/h)</option>
+            <option value="mph">Miles per hour (mph)</option>
+          </select>
+          <button type="submit" style="padding: 0.75rem 1.5rem; align-self: flex-start;">Save Wind Unit</button>
+        </form>
+        <div id="wind-unit-message" style="margin-top: 1rem;"></div>
+      </div>
+
+      <!-- Max Speed Unit Section -->
+      <div style="background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
+        <h2 style="margin-top: 0; color: var(--text-primary);">🚀 Max Speed Unit</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Choose how max speed is displayed throughout the app</p>
+        
+        <form id="speed-unit-form" style="display: flex; flex-direction: column; gap: 1rem;">
+          <select id="speed-unit-select" name="speedUnit" style="padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-primary); font-size: 1rem;">
+            <option value="mph">Miles per hour (mph)</option>
+            <option value="kmh">Kilometers per hour (km/h)</option>
+            <option value="ms">Meters per second (m/s)</option>
+          </select>
+          <button type="submit" style="padding: 0.75rem 1.5rem; align-self: flex-start;">Save Speed Unit</button>
+        </form>
+        <div id="speed-unit-message" style="margin-top: 1rem;"></div>
+      </div>
+    </div>
+
+    <script>
+      // Hamburger menu toggle
+      const hamburgerBtn = document.getElementById("hamburger-btn");
+      const menuDropdown = document.getElementById("menu-dropdown");
+      
+      hamburgerBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menuDropdown.style.display = menuDropdown.style.display === "none" ? "block" : "none";
+      });
+      
+      // Close menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!hamburgerBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
+          menuDropdown.style.display = "none";
+        }
+      });
+
+      // Sessions button handler
+      document.getElementById("sessions-btn").addEventListener("click", () => {
+        window.location.href = "/index.html";
+      });
+
+      // Insights button handler
+      document.getElementById("insights-btn").addEventListener("click", () => {
+        window.location.href = "/insights.html";
+      });
+
+      // About button handler
+      document.getElementById("about-btn").addEventListener("click", () => {
+        window.location.href = "/about.html";
+      });
+
+      // Load quiver from server
+      async function loadQuiver() {
+        try {
+          const res = await fetch("http://localhost:3000/quiver");
+          if (!res.ok) throw new Error("Failed to load quiver");
+          const data = await res.json();
+          displayQuiver(data.quiver || []);
+        } catch (err) {
+          console.error("Error loading quiver:", err);
+          document.getElementById("quiver-list").innerHTML = 
+            '<p style="color: var(--error);">Failed to load quiver</p>';
+        }
+      }
+
+      // Display quiver list
+      function displayQuiver(quiver) {
+        const quiverList = document.getElementById("quiver-list");
+        if (quiver.length === 0) {
+          quiverList.innerHTML = '<p style="color: var(--text-muted);">No kites in quiver yet. Add your first kite above!</p>';
+        } else {
+          let html = '<ul style="list-style: none; padding: 0; margin: 0;">';
+          quiver.forEach(kite => {
+            html += `<li style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; margin-bottom: 0.5rem; background: var(--bg-main); border-radius: 12px; border: 1px solid var(--border);">
+              <span style="color: var(--text-primary); font-size: 1rem;">${kite}</span>
+              <button class="remove-kite-btn" data-kite="${kite}" style="background: var(--error); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">Remove</button>
+            </li>`;
+          });
+          html += '</ul>';
+          quiverList.innerHTML = html;
+          
+          // Add event listeners to remove buttons
+          document.querySelectorAll(".remove-kite-btn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+              const kite = btn.dataset.kite;
+              await removeKite(kite);
+            });
+          });
+        }
+      }
+
+      // Add kite to quiver
+      document.getElementById("add-kite-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const kiteName = form.kiteName.value.trim();
+        const message = document.getElementById("kite-add-message");
+        
+        if (!kiteName) return;
+        
+        try {
+          const res = await fetch("http://localhost:3000/quiver", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ kite: kiteName })
+          });
+          
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Failed to add kite");
+          }
+          
+          message.textContent = "✅ Kite added successfully!";
+          message.style.color = "var(--success)";
+          form.reset();
+          await loadQuiver();
+          
+          setTimeout(() => {
+            message.textContent = "";
+          }, 3000);
+        } catch (err) {
+          message.textContent = "❌ " + err.message;
+          message.style.color = "var(--error)";
+        }
+      });
+
+      // Remove kite from quiver
+      async function removeKite(kiteName) {
+        if (!confirm(`Remove ${kiteName} from quiver?`)) return;
+        
+        try {
+          const res = await fetch("http://localhost:3000/quiver", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ kite: kiteName })
+          });
+          
+          if (!res.ok) throw new Error("Failed to remove kite");
+          
+          await loadQuiver();
+        } catch (err) {
+          alert("Could not remove kite: " + err.message);
+        }
+      }
+
+      // Load quiver on page load
+      loadQuiver();
+
+      // ============ Locations Management ============
+
+      // Load locations from server
+      async function loadLocations() {
+        try {
+          const res = await fetch("http://localhost:3000/locations");
+          if (!res.ok) throw new Error("Failed to load locations");
+          const data = await res.json();
+          displayLocations(data.locations || []);
+        } catch (err) {
+          console.error("Error loading locations:", err);
+          document.getElementById("locations-list").innerHTML = 
+            '<p style="color: var(--error);">Failed to load locations</p>';
+        }
+      }
+
+      // Display locations list
+      function displayLocations(locations) {
+        const locationsList = document.getElementById("locations-list");
+        if (locations.length === 0) {
+          locationsList.innerHTML = '<p style="color: var(--text-muted);">No locations saved yet. Add your first location above!</p>';
+        } else {
+          let html = '<ul style="list-style: none; padding: 0; margin: 0;">';
+          locations.forEach(location => {
+            html += `<li style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; margin-bottom: 0.5rem; background: var(--bg-main); border-radius: 12px; border: 1px solid var(--border);">
+              <span style="color: var(--text-primary); font-size: 1rem;">${location}</span>
+              <button class="remove-location-btn" data-location="${location}" style="background: var(--error); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">Remove</button>
+            </li>`;
+          });
+          html += '</ul>';
+          locationsList.innerHTML = html;
+          
+          // Add event listeners to remove buttons
+          document.querySelectorAll(".remove-location-btn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+              const location = btn.dataset.location;
+              await removeLocation(location);
+            });
+          });
+        }
+      }
+
+      // Add location
+      document.getElementById("add-location-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const locationName = form.locationName.value.trim();
+        const message = document.getElementById("location-add-message");
+        
+        if (!locationName) return;
+        
+        try {
+          const res = await fetch("http://localhost:3000/locations", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ location: locationName })
+          });
+          
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Failed to add location");
+          }
+          
+          message.textContent = "✅ Location added successfully!";
+          message.style.color = "var(--success)";
+          form.reset();
+          await loadLocations();
+          
+          setTimeout(() => {
+            message.textContent = "";
+          }, 3000);
+        } catch (err) {
+          message.textContent = "❌ " + err.message;
+          message.style.color = "var(--error)";
+        }
+      });
+
+      // Remove location
+      async function removeLocation(locationName) {
+        if (!confirm(`Remove ${locationName} from locations?`)) return;
+        
+        try {
+          const res = await fetch("http://localhost:3000/locations", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ location: locationName })
+          });
+          
+          if (!res.ok) throw new Error("Failed to remove location");
+          
+          await loadLocations();
+        } catch (err) {
+          alert("Could not remove location: " + err.message);
+        }
+      }
+
+      // Load boards from server
+      async function loadBoards() {
+        try {
+          const res = await fetch("http://localhost:3000/boards");
+          if (!res.ok) throw new Error("Failed to load boards");
+          const data = await res.json();
+          displayBoards(data.boards || []);
+        } catch (err) {
+          console.error("Error loading boards:", err);
+          document.getElementById("boards-list").innerHTML = 
+            '<p style="color: var(--error);">Failed to load boards</p>';
+        }
+      }
+
+      // Display boards list
+      function displayBoards(boards) {
+        const boardsList = document.getElementById("boards-list");
+        if (boards.length === 0) {
+          boardsList.innerHTML = '<p style="color: var(--text-muted);">No boards yet. Add your first board above!</p>';
+        } else {
+          let html = '<ul style="list-style: none; padding: 0; margin: 0;">';
+          boards.forEach(board => {
+            html += `<li style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; margin-bottom: 0.5rem; background: var(--bg-main); border-radius: 12px; border: 1px solid var(--border);">
+              <span style="color: var(--text-primary); font-size: 1rem;">${board}</span>
+              <button class="remove-board-btn" data-board="${board}" style="background: var(--error); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">Remove</button>
+            </li>`;
+          });
+          html += '</ul>';
+          boardsList.innerHTML = html;
+          
+          // Add event listeners to remove buttons
+          document.querySelectorAll(".remove-board-btn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+              const board = btn.dataset.board;
+              await removeBoard(board);
+            });
+          });
+        }
+      }
+
+      // Add board
+      document.getElementById("add-board-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const boardName = form.boardName.value.trim();
+        const message = document.getElementById("board-add-message");
+        
+        if (!boardName) return;
+        
+        try {
+          const res = await fetch("http://localhost:3000/boards", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ board: boardName })
+          });
+          
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Failed to add board");
+          }
+          
+          message.textContent = "✅ Board added successfully!";
+          message.style.color = "var(--success)";
+          form.reset();
+          await loadBoards();
+          
+          setTimeout(() => {
+            message.textContent = "";
+          }, 3000);
+        } catch (err) {
+          message.textContent = "❌ " + err.message;
+          message.style.color = "var(--error)";
+        }
+      });
+
+      // Remove board
+      async function removeBoard(boardName) {
+        if (!confirm(`Remove ${boardName} from boards?`)) return;
+        
+        try {
+          const res = await fetch("http://localhost:3000/boards", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ board: boardName })
+          });
+          
+          if (!res.ok) throw new Error("Failed to remove board");
+          
+          await loadBoards();
+        } catch (err) {
+          alert("Could not remove board: " + err.message);
+        }
+      }
+
+      // Load wind speed unit from server
+      async function loadWindUnit() {
+        try {
+          const res = await fetch("http://localhost:3000/settings/wind-unit");
+          if (!res.ok) throw new Error("Failed to load wind unit");
+          const data = await res.json();
+          document.getElementById("wind-unit-select").value = data.windUnit || "kts";
+        } catch (err) {
+          console.error("Error loading wind unit:", err);
+        }
+      }
+
+      // Save wind speed unit
+      document.getElementById("wind-unit-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const windUnit = document.getElementById("wind-unit-select").value;
+        const message = document.getElementById("wind-unit-message");
+        
+        try {
+          const res = await fetch("http://localhost:3000/settings/wind-unit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ windUnit })
+          });
+          
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Failed to save wind unit");
+          }
+          
+          message.textContent = "✅ Wind unit saved successfully!";
+          message.style.color = "var(--success)";
+          
+          setTimeout(() => {
+            message.textContent = "";
+          }, 3000);
+        } catch (err) {
+          message.textContent = "❌ " + err.message;
+          message.style.color = "var(--error)";
+        }
+      });
+
+      // Load speed unit from server
+      async function loadSpeedUnit() {
+        try {
+          const res = await fetch("http://localhost:3000/settings/speed-unit");
+          if (!res.ok) throw new Error("Failed to load speed unit");
+          const data = await res.json();
+          document.getElementById("speed-unit-select").value = data.speedUnit || "mph";
+        } catch (err) {
+          console.error("Error loading speed unit:", err);
+        }
+      }
+
+      // Save speed unit
+      document.getElementById("speed-unit-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const speedUnit = document.getElementById("speed-unit-select").value;
+        const message = document.getElementById("speed-unit-message");
+        
+        try {
+          const res = await fetch("http://localhost:3000/settings/speed-unit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ speedUnit })
+          });
+          
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Failed to save speed unit");
+          }
+          
+          message.textContent = "✅ Speed unit saved successfully!";
+          message.style.color = "var(--success)";
+          
+          setTimeout(() => {
+            message.textContent = "";
+          }, 3000);
+        } catch (err) {
+          message.textContent = "❌ " + err.message;
+          message.style.color = "var(--error)";
+        }
+      });
+
+      // Load everything on page load
+      loadLocations();
+      loadBoards();
+      loadWindUnit();
+      loadSpeedUnit();
+    </script>
+  </body>
+</html>

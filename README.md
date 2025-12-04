@@ -1,0 +1,312 @@
+# Kitesurf Session Tracker
+
+A web-based application for tracking and analyzing kitesurfing sessions. Built with Node.js, Express, and SQLite - no external database or authentication required.
+
+**Developed by:** Stuart Skeer  
+**Version:** 1.0.0  
+**Released:** December 2025
+
+## Features
+
+### Session Management
+- **Add Sessions**: Track detailed information about each kitesurf session
+- **Update Sessions**: Modify existing session details
+- **Remove Sessions**: Delete sessions by ID
+- **View All Sessions**: Display sessions in a filterable, sortable table
+- **Simple ID System**: User-friendly sequential IDs (1, 2, 3...) mapped to UUIDs internally
+
+### Session Details
+- **Required Fields**:
+  - Location (selected from your saved spots)
+  - Date
+  - Kite (selected from your quiver)
+  - Board (selected from your boards)
+  - Session type (Freeride, Freestyle, Big Air, Wave)
+  - Duration (HH:MM format)
+
+- **Optional Fields**:
+  - Max jump height (meters)
+  - Wind speed (customizable units)
+  - Wind direction (On Shore, Cross Shore, Cross On, Cross Off, Off Shore)
+  - Max speed (customizable units)
+  - Max jump distance (meters)
+  - Max airtime (seconds)
+
+### Insights Dashboard
+- **Statistics Cards**:
+  - Highest jump (clickable to view session details)
+  - Total sessions count
+  - Total time on the water
+  
+- **Visualizations**:
+  - Time by Kite (pie chart)
+  - Sessions by Location (clickable for location statistics)
+  
+- **Interactive Features**:
+  - Click highest jump card to see the full session details
+  - Click any location to view aggregated statistics:
+    - Total sessions and time at location
+    - Max, min, and average wind speed
+    - Most common wind direction
+    - Max and average jump heights
+    - Most common session type
+
+### Settings
+- **Manage Your Quiver**: Add and remove kites
+- **Manage Locations**: Add and remove favorite kite spots
+- **Manage Boards**: Add and remove boards
+- **Wind Speed Unit**: Choose between Knots, Beaufort, m/s, km/h, or mph
+- **Max Speed Unit**: Choose between mph, km/h, or m/s
+
+### About Page
+- Comprehensive usage guide
+- Getting started instructions
+- Feature overview and tips
+- Developer information
+
+### User Experience
+- **Single User**: No login required - designed for personal use
+- **Standalone**: All data stored locally in SQLite database
+- **Responsive UI**: Modern, clean interface with dark theme
+- **Hamburger Menu**: Easy navigation between Sessions, Insights, Settings, and About
+- **Table Filtering**: Filter sessions by any column
+- **Table Sorting**: Sort by date, duration, wind speed, jump height, and more
+
+## Installation
+
+1. **Prerequisites**: Install Node.js (v14 or higher)
+
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup** (optional):
+   - A `.env` file is supported but not required
+   - The application works out of the box with default settings
+
+## Running the Application
+
+**Start the server**:
+```bash
+npm start
+```
+
+**Development mode** (with auto-reload):
+```bash
+npm run dev
+```
+
+The application will be available at **`http://localhost:3000`**
+
+## Quick Start Guide
+
+### First Time Setup
+
+1. **Navigate to Settings**:
+   - Click the hamburger menu (☰) in the top right
+   - Select "Settings"
+
+2. **Add Your Gear**:
+   - Add kites to your quiver (e.g., "Duotone Rebel 9m")
+   - Add boards (e.g., "North Select 140cm")
+   - Add your favorite kite spots (e.g., "Tarifa", "Cape Town")
+
+3. **Set Preferences** (optional):
+   - Choose your preferred wind speed unit
+   - Choose your preferred max speed unit
+
+### Managing Sessions
+
+1. **View Sessions**:
+   - Click "Fetch Sessions" on the main page
+   - Sessions display in a table with all details
+   - Use filter inputs at the top of each column
+   - Use sort dropdowns for numerical/date fields
+
+2. **Add a Session**:
+   - Expand "➕ Add Session"
+   - Fill in required fields
+   - Optionally expand "Optional Information" for detailed stats
+   - Click "Add Session"
+
+3. **Update a Session**:
+   - Note the Session ID from the table
+   - Expand "✏️ Update Session"
+   - Enter the Session ID
+   - Fill in fields you want to update
+   - Click "Update Session"
+
+4. **Remove a Session**:
+   - Note the Session ID from the table
+   - Expand "🗑️ Remove Session"
+   - Enter the Session ID
+   - Click "Remove Session"
+
+### Insights
+
+1. **Access Insights**:
+   - Click hamburger menu → "Insights"
+
+2. **Explore Data**:
+   - View key statistics in the top cards
+   - Click "Highest Jump" to see that session's details
+   - Click any location in "Sessions by Location" to see location statistics
+   - View kite usage distribution in the pie chart
+
+## Project Structure
+
+```
+Sessions/
+├── controllers/              # Business logic
+│   ├── sessionController.js  # Session CRUD operations
+│   ├── quiverController.js   # Kite management
+│   ├── locationsController.js # Location management
+│   ├── boardsController.js   # Board management
+│   └── settingsController.js # Settings (wind/speed units)
+├── models/                   # Data validation
+│   └── session.js           # Joi validation schemas
+├── services/                 # Core services
+│   └── database.js          # SQLite setup and initialization
+├── views/                    # API routing
+│   └── router.js            # Express routes
+├── frontend/                 # Client-side files
+│   ├── index.html           # Main sessions page
+│   ├── insights.html        # Analytics dashboard
+│   ├── settings.html        # Configuration page
+│   ├── about.html           # Usage guide and app info
+│   ├── style.css            # Global styles
+│   └── images/              # Assets
+├── index.js                  # Express server entry point
+├── package.json              # Dependencies and scripts
+├── .env                      # Environment variables (optional)
+└── kitesessions.db          # SQLite database (auto-created)
+```
+
+## Database Schema
+
+The application uses SQLite with two main tables:
+
+### `sessions` Table
+- **id** (TEXT PRIMARY KEY) - UUID v4
+- **location** (TEXT) - Session location
+- **date** (TEXT) - Date in YYYY-MM-DD format
+- **kite** (TEXT) - Kite used
+- **board** (TEXT) - Board used
+- **session_type** (TEXT) - Type: Freeride, Freestyle, Big Air, or Wave
+- **duration** (TEXT) - Duration in HH:MM format
+- **max_jump** (REAL) - Maximum jump height in meters (optional)
+- **wind_direction** (TEXT) - Wind direction (optional)
+- **wind_speed** (INTEGER) - Wind speed in stored unit (optional)
+- **max_speed** (REAL) - Maximum speed in stored unit (optional)
+- **max_jump_distance** (REAL) - Maximum jump distance in meters (optional)
+- **max_airtime** (REAL) - Maximum airtime in seconds (optional)
+
+### `settings` Table
+- **id** (TEXT PRIMARY KEY) - Setting identifier
+- **data** (TEXT) - JSON-stringified setting data
+
+**Settings stored:**
+- `global-quiver`: Array of kite names
+- `global-locations`: Array of location names
+- `global-boards`: Array of board names
+- `wind-speed-unit`: Selected wind speed unit
+- `max-speed-unit`: Selected max speed unit
+
+## Technologies
+
+- **Backend**: Node.js, Express 5
+- **Database**: SQLite (better-sqlite3)
+- **Validation**: Joi
+- **Frontend**: Vanilla HTML, CSS, JavaScript (no frameworks)
+- **Additional**: CORS, dotenv, UUID, express-session
+
+## API Endpoints
+
+### Sessions
+- `GET /sessions` - Get all sessions
+- `POST /sessions` - Create a new session
+- `GET /sessions/:id` - Get session by UUID
+- `PUT /sessions/:id` - Update session by UUID
+- `DELETE /sessions/:id` - Delete session by UUID
+
+### Quiver (Kites)
+- `GET /quiver` - Get all kites
+- `POST /quiver` - Add a kite (body: `{kiteName: string}`)
+- `DELETE /quiver` - Remove a kite (body: `{kiteName: string}`)
+
+### Locations
+- `GET /locations` - Get all locations
+- `POST /locations` - Add a location (body: `{locationName: string}`)
+- `DELETE /locations` - Remove a location (body: `{locationName: string}`)
+
+### Boards
+- `GET /boards` - Get all boards
+- `POST /boards` - Add a board (body: `{boardName: string}`)
+- `DELETE /boards` - Remove a board (body: `{boardName: string}`)
+
+### Settings
+- `GET /settings/wind-unit` - Get wind speed unit
+- `POST /settings/wind-unit` - Update wind speed unit (body: `{windUnit: string}`)
+- `GET /settings/speed-unit` - Get max speed unit
+- `POST /settings/speed-unit` - Update max speed unit (body: `{speedUnit: string}`)
+
+## Development
+
+**Development mode** with auto-reload:
+```bash
+npm run dev
+```
+
+This uses nodemon to automatically restart the server when files change.
+
+### Building for Distribution
+
+To create a standalone executable for distribution:
+
+1. **Install pkg** (if not already installed):
+   ```bash
+   npm install -g pkg
+   ```
+
+2. **Build executables** for your target platforms:
+   ```bash
+   pkg . --targets node18-win-x64,node18-macos-x64,node18-linux-x64
+   ```
+
+3. **Output**: Executables will be created in the project root:
+   - `Sessions-win.exe` (Windows)
+   - `Sessions-macos` (macOS)
+   - `Sessions-linux` (Linux)
+
+4. **Distribution notes**:
+   - The SQLite database will be created automatically on first run
+   - Frontend files must be included alongside the executable
+   - Consider using tools like Electron for a more integrated desktop experience
+
+### Packaging with Electron (Future Enhancement)
+
+For a true desktop application experience:
+1. Wrap the Express server with Electron
+2. Bundle all assets and dependencies
+3. Create installers for each platform
+4. Add auto-update functionality
+
+## Future Enhancements
+
+Potential features for future development:
+- Export sessions to CSV/JSON
+- Import sessions from file
+- Session photos/media
+- Weather data integration
+- Multi-user support with authentication
+- Mobile app version
+- Desktop app packaging (Electron)
+- Session comparison tools
+- Progress tracking over time
+- Gear usage analytics
+
+## License
+
+ISC
+

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Session Tracker</title>
+    <!-- External CSS stylesheet for styling -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Top right hamburger menu -->
+    <div style="position: absolute; top: 1rem; right: 1rem; z-index: 100;">
+      <button id="hamburger-btn" style="background: var(--bg-card); border: 1px solid var(--border); padding: 0.7rem; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; width: 40px; height: 40px; justify-content: center; align-items: center;">
+        <span style="display: block; width: 20px; height: 2px; background: var(--text-primary); transition: 0.3s;"></span>
+        <span style="display: block; width: 20px; height: 2px; background: var(--text-primary); transition: 0.3s;"></span>
+        <span style="display: block; width: 20px; height: 2px; background: var(--text-primary); transition: 0.3s;"></span>
+      </button>
+      
+      <!-- Dropdown menu -->
+      <div id="menu-dropdown" style="display: none; position: absolute; top: 50px; right: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; min-width: 180px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+        <button id="insights-btn" style="width: 100%; padding: 0.8rem 1rem; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; border-bottom: 1px solid var(--border); border-radius: 12px 12px 0 0;">
+          <span style="font-size: 1.2em;">📈</span> Insights
+        </button>
+        <button id="settings-btn" style="width: 100%; padding: 0.8rem 1rem; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; border-bottom: 1px solid var(--border);">
+          <span style="font-size: 1.2em;">⚙️</span> Settings
+        </button>
+        <button id="about-btn" style="width: 100%; padding: 0.8rem 1rem; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; border-radius: 0 0 12px 12px;">
+          <span style="font-size: 1.2em;">ℹ️</span> About
+        </button>
+      </div>
+    </div>
+    
+    <h1>Kitesurf Session Tracker</h1>
+
+    <!-- Button to fetch and display all sessions -->
+    <button id="fetch-btn">Fetch Sessions</button>
+    
+    <!-- Container where session data will be displayed -->
+    <div id="output" style="max-height: 600px; overflow-y: auto; overflow-x: auto;">No sessions loaded...</div>
+
+    <!-- Collapsible section for adding a new session -->
+    <details style="margin-top:2em;">
+      <summary style="font-size:1.1em; cursor:pointer;">➕ Add Session</summary>
+      <form id="add-session-form" style="margin-top:1em; display:flex; flex-direction:column; gap:1em; max-width:400px; margin-left:auto; margin-right:auto;">
+        <div style="display:flex; flex-direction:column;">
+          <label for="add-location" style="margin-bottom:0.3em; font-weight:bold;">Location</label>
+          <select id="add-location" name="location" required>
+            <option value="">Select a location...</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label for="add-date" style="margin-bottom:0.3em; font-weight:bold;">Date</label>
+          <input type="date" id="add-date" name="date" required />
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label for="add-kite" style="margin-bottom:0.3em; font-weight:bold;">Kite</label>
+          <select id="add-kite" name="kite" required>
+            <option value="">Select a kite...</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label for="add-board" style="margin-bottom:0.3em; font-weight:bold;">Board</label>
+          <select id="add-board" name="board" required>
+            <option value="">Select a board...</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label for="add-session-type" style="margin-bottom:0.3em; font-weight:bold;">Session Type</label>
+          <select id="add-session-type" name="session_type" required>
+            <option value="">Select session type...</option>
+            <option value="Freeride">Freeride</option>
+            <option value="Freestyle">Freestyle</option>
+            <option value="Big Air">Big Air</option>
+            <option value="Wave">Wave</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label for="add-duration" style="margin-bottom:0.3em; font-weight:bold;">Duration (HH:MM)</label>
+          <input type="time" id="add-duration" name="duration" placeholder="hh:mm" value="00:00" required />
+        </div>
+        <details style="margin-top:1em;">
+          <summary style="font-weight:bold; cursor:pointer; margin-bottom:0.5em;">Optional Information</summary>
+          <div style="display:flex; flex-direction:column; gap:1em; margin-top:0.5em;">
+            <div style="display:flex; flex-direction:column;">
+              <label for="add-wind-direction" style="margin-bottom:0.3em; font-weight:bold;">Wind Direction</label>
+              <select id="add-wind-direction" name="wind_direction">
+                <option value="">Select wind direction...</option>
+                <option value="On Shore">On Shore</option>
+                <option value="Cross Shore">Cross Shore</option>
+                <option value="Cross On">Cross On</option>
+                <option value="Cross Off">Cross Off</option>
+                <option value="Off Shore">Off Shore</option>
+              </select>
+            </div>
+            <div style="display:flex; flex-direction:column;">
+              <label for="add-wind-speed" id="add-wind-speed-label" style="margin-bottom:0.3em; font-weight:bold;">Wind Speed</label>
+              <input type="number" id="add-wind-speed" name="wind_speed" placeholder="e.g., 25.5" step="0.1" min="0" />
+            </div>
+            <div style="display:flex; flex-direction:column;">
+              <label for="add-max-jump" style="margin-bottom:0.3em; font-weight:bold;">Max Jump</label>
+              <input type="number" id="add-max-jump" name="max_jump" placeholder="e.g., 15.7" step="0.1" min="0" />
+            </div>
+            <div style="display:flex; flex-direction:column;">
+              <label for="add-max-jump-distance" style="margin-bottom:0.3em; font-weight:bold;">Max Jump Distance</label>
+              <input type="number" id="add-max-jump-distance" name="max_jump_distance" placeholder="e.g., 35.2 meters" step="0.1" min="0" />
+            </div>
+            <div style="display:flex; flex-direction:column;">
+              <label for="add-max-airtime" style="margin-bottom:0.3em; font-weight:bold;">Max Airtime</label>
+              <input type="number" id="add-max-airtime" name="max_airtime" placeholder="Seconds" step="0.1" min="0" />
+            </div>
+            <div style="display:flex; flex-direction:column;">
+              <label for="add-max-speed" id="add-max-speed-label" style="margin-bottom:0.3em; font-weight:bold;">Max Speed</label>
+              <input type="number" id="add-max-speed" name="max_speed" placeholder="e.g., 45.5" step="0.1" min="0" />
+            </div>
+          </div>
+        </details>
+        <button type="submit" style="margin-top:0.5em;">Add Session</button>
+      </form>
+      <!-- Status message displayed after attempting to add a session -->
+      <div id="add-session-message"></div>
+    </details>
+
+    <!-- Collapsible section for removing a session -->
+    <details style="margin-top:2em;">
+      <summary style="font-size:1.1em; cursor:pointer;">🗑️ Remove Session</summary>
+      <form id="remove-session-form" style="margin-top:1em; display:flex; flex-direction:column; gap:1em; max-width:400px; margin-left:auto; margin-right:auto;">
+        <!-- User enters the simple display number (1, 2, 3...), not the UUID -->
+        <div style="display:flex; flex-direction:column;">
+          <label for="remove-id" style="margin-bottom:0.3em; font-weight:bold;">Session ID</label>
+          <input type="number" id="remove-id" name="id" placeholder="Enter session ID to remove" required />
+        </div>
+        <button type="submit" style="margin-top:0.5em;">Remove Session</button>
+      </form>
+      <!-- Status message displayed after attempting to remove a session -->
+      <div id="remove-session-message"></div>
+    </details>
+    
+    <!-- Collapsible section for updating an existing session -->
+    <details style="margin-top:2em;">
+      <summary style="font-size:1.1em; cursor:pointer;">✏️ Update Session</summary>
+      <form id="update-session-form" style="margin-top:1em; display:flex; flex-direction:column; gap:1em; max-width:400px; margin-left:auto; margin-right:auto;">
+        <!-- User enters the simple display number (1, 2, 3...), not the UUID -->
+        <div style="display:flex; flex-direction:column;">
+          <label for="update-id" style="margin-bottom:0.3em; font-weight:bold;">Session ID</label>
+          <input type="number" id="update-id" name="id" placeholder="Enter session ID" required />
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label for="update-location" style="margin-bottom:0.3em; font-weight:bold;">Location (optional)</label>
+          <select id="update-location" name="location">
+            <option value="">Select a location...</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label for="update-date" style="margin-bottom:0.3em; font-weight:bold;">Date (optional)</label>
+          <input type="date" id="update-date" name="date" />
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label for="update-kite" style="margin-bottom:0.3em; font-weight:bold;">Kite (optional)</label>
+          <select id="update-kite" name="kite">
+            <option value="">Select a kite...</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label for="update-board" style="margin-bottom:0.3em; font-weight:bold;">Board (optional)</label>
+          <select id="update-board" name="board">
+            <option value="">Select a board...</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label for="update-session-type" style="margin-bottom:0.3em; font-weight:bold;">Session Type (optional)</label>
+          <select id="update-session-type" name="session_type">
+            <option value="">Select session type...</option>
+            <option value="Freeride">Freeride</option>
+            <option value="Freestyle">Freestyle</option>
+            <option value="Big Air">Big Air</option>
+            <option value="Wave">Wave</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label for="update-duration" style="margin-bottom:0.3em; font-weight:bold;">Duration (HH:MM Optional)</label>
+          <input type="time" id="update-duration" name="duration" placeholder="hh:mm" value="00:00" />
+        </div>
+        <details style="margin-top:1em;">
+          <summary style="font-weight:bold; cursor:pointer; margin-bottom:0.5em;">Optional Information</summary>
+          <div style="display:flex; flex-direction:column; gap:1em; margin-top:0.5em;">
+            <div style="display:flex; flex-direction:column;">
+              <label for="update-wind-direction" style="margin-bottom:0.3em; font-weight:bold;">Wind Direction</label>
+              <select id="update-wind-direction" name="wind_direction">
+                <option value="">Select wind direction...</option>
+                <option value="On Shore">On Shore</option>
+                <option value="Cross Shore">Cross Shore</option>
+                <option value="Cross On">Cross On</option>
+                <option value="Cross Off">Cross Off</option>
+                <option value="Off Shore">Off Shore</option>
+              </select>
+            </div>
+            <div style="display:flex; flex-direction:column;">
+              <label for="update-wind-speed" id="update-wind-speed-label" style="margin-bottom:0.3em; font-weight:bold;">Wind Speed</label>
+              <input type="number" id="update-wind-speed" name="wind_speed" placeholder="e.g., 25.5" step="0.1" min="0" />
+            </div>
+            <div style="display:flex; flex-direction:column;">
+              <label for="update-max-jump" style="margin-bottom:0.3em; font-weight:bold;">Max Jump</label>
+              <input type="number" id="update-max-jump" name="max_jump" placeholder="New max jump" step="0.1" min="0" />
+            </div>
+            <div style="display:flex; flex-direction:column;">
+              <label for="update-max-jump-distance" style="margin-bottom:0.3em; font-weight:bold;">Max Jump Distance</label>
+              <input type="number" id="update-max-jump-distance" name="max_jump_distance" placeholder="e.g., 35.2 meters" step="0.1" min="0" />
+            </div>
+            <div style="display:flex; flex-direction:column;">
+              <label for="update-max-airtime" style="margin-bottom:0.3em; font-weight:bold;">Max Airtime</label>
+              <input type="number" id="update-max-airtime" name="max_airtime" placeholder="Seconds" step="0.1" min="0" />
+            </div>
+            <div style="display:flex; flex-direction:column;">
+              <label for="update-max-speed" id="update-max-speed-label" style="margin-bottom:0.3em; font-weight:bold;">Max Speed</label>
+              <input type="number" id="update-max-speed" name="max_speed" placeholder="e.g., 45.5" step="0.1" min="0" />
+            </div>
+          </div>
+        </details>
+        <button type="submit" style="margin-top:0.5em;">Update Session</button>
+      </form>
+      <!-- Status message displayed after attempting to update a session -->
+      <div id="update-session-message"></div>
+    </details>
+    <script>
+      // Hamburger menu toggle
+      const hamburgerBtn = document.getElementById("hamburger-btn");
+      const menuDropdown = document.getElementById("menu-dropdown");
+      
+      hamburgerBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menuDropdown.style.display = menuDropdown.style.display === "none" ? "block" : "none";
+      });
+      
+      // Close menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!hamburgerBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
+          menuDropdown.style.display = "none";
+        }
+      });
+
+      // Insights button handler
+      document.getElementById("insights-btn").addEventListener("click", () => {
+        window.location.href = "/insights.html";
+      });
+
+      // Settings button handler
+      document.getElementById("settings-btn").addEventListener("click", () => {
+        window.location.href = "/settings.html";
+      });
+
+      // About button handler
+      document.getElementById("about-btn").addEventListener("click", () => {
+        window.location.href = "/about.html";
+      });
+      
+      // Load quiver and populate dropdown
+      async function loadQuiver() {
+        try {
+          const res = await fetch("http://localhost:3000/quiver");
+          if (!res.ok) throw new Error("Failed to load quiver");
+          const data = await res.json();
+          const quiver = data.quiver || [];
+          
+          // Populate the kite dropdown in add form
+          const addKiteSelect = document.getElementById("add-kite");
+          addKiteSelect.innerHTML = '<option value="">Select a kite...</option>';
+          quiver.forEach(kite => {
+            const option = document.createElement("option");
+            option.value = kite;
+            option.textContent = kite;
+            addKiteSelect.appendChild(option);
+          });
+
+          // Populate the kite dropdown in update form
+          const updateKiteSelect = document.getElementById("update-kite");
+          updateKiteSelect.innerHTML = '<option value="">Select a kite...</option>';
+          quiver.forEach(kite => {
+            const option = document.createElement("option");
+            option.value = kite;
+            option.textContent = kite;
+            updateKiteSelect.appendChild(option);
+          });
+        } catch (err) {
+          console.error("Error loading quiver:", err);
+        }
+      }
+
+      // Load locations and populate dropdown
+      async function loadLocations() {
+        try {
+          const res = await fetch("http://localhost:3000/locations");
+          if (!res.ok) throw new Error("Failed to load locations");
+          const data = await res.json();
+          const locations = data.locations || [];
+          
+          // Populate the location dropdown in add form
+          const addLocationSelect = document.getElementById("add-location");
+          addLocationSelect.innerHTML = '<option value="">Select a location...</option>';
+          locations.forEach(location => {
+            const option = document.createElement("option");
+            option.value = location;
+            option.textContent = location;
+            addLocationSelect.appendChild(option);
+          });
+
+          // Populate the location dropdown in update form
+          const updateLocationSelect = document.getElementById("update-location");
+          updateLocationSelect.innerHTML = '<option value="">Select a location...</option>';
+          locations.forEach(location => {
+            const option = document.createElement("option");
+            option.value = location;
+            option.textContent = location;
+            updateLocationSelect.appendChild(option);
+          });
+        } catch (err) {
+          console.error("Error loading locations:", err);
+        }
+      }
+
+      // Load boards and populate dropdown
+      async function loadBoards() {
+        try {
+          const res = await fetch("http://localhost:3000/boards");
+          if (!res.ok) throw new Error("Failed to load boards");
+          const data = await res.json();
+          const boards = data.boards || [];
+          
+          // Populate the board dropdown in add form
+          const addBoardSelect = document.getElementById("add-board");
+          addBoardSelect.innerHTML = '<option value="">Select a board...</option>';
+          boards.forEach(board => {
+            const option = document.createElement("option");
+            option.value = board;
+            option.textContent = board;
+            addBoardSelect.appendChild(option);
+          });
+
+          // Populate the board dropdown in update form
+          const updateBoardSelect = document.getElementById("update-board");
+          updateBoardSelect.innerHTML = '<option value="">Select a board...</option>';
+          boards.forEach(board => {
+            const option = document.createElement("option");
+            option.value = board;
+            option.textContent = board;
+            updateBoardSelect.appendChild(option);
+          });
+        } catch (err) {
+          console.error("Error loading boards:", err);
+        }
+      }
+      
+      // Load quiver, locations, and boards on page load
+      loadQuiver();
+      loadLocations();
+      loadBoards();
+      
+      // Load wind speed unit
+      let currentWindUnit = 'kts';
+      async function loadWindUnit() {
+        try {
+          const res = await fetch("http://localhost:3000/settings/wind-unit");
+          if (!res.ok) throw new Error("Failed to load wind unit");
+          const data = await res.json();
+          currentWindUnit = data.windUnit || 'kts';
+          
+          // Update labels to show current unit
+          const unitLabel = getWindUnitLabel(currentWindUnit);
+          document.getElementById('add-wind-speed-label').textContent = `Wind Speed (${unitLabel})`;
+          document.getElementById('update-wind-speed-label').textContent = `Wind Speed (${unitLabel})`;
+        } catch (err) {
+          console.error("Error loading wind unit:", err);
+        }
+      }
+      loadWindUnit();
+      
+      // Load max speed unit
+      let currentSpeedUnit = 'mph';
+      async function loadSpeedUnit() {
+        try {
+          const res = await fetch("http://localhost:3000/settings/speed-unit");
+          if (!res.ok) throw new Error("Failed to load speed unit");
+          const data = await res.json();
+          currentSpeedUnit = data.speedUnit || 'mph';
+          
+          // Update labels to show current unit
+          const unitLabel = getSpeedUnitLabel(currentSpeedUnit);
+          document.getElementById('add-max-speed-label').textContent = `Max Speed (${unitLabel})`;
+          document.getElementById('update-max-speed-label').textContent = `Max Speed (${unitLabel})`;
+        } catch (err) {
+          console.error("Error loading speed unit:", err);
+        }
+      }
+      loadSpeedUnit();
+      
+      // Get wind unit label for display
+      function getWindUnitLabel(unit) {
+        const labels = {
+          kts: 'kts',
+          bft: 'Bft',
+          ms: 'm/s',
+          kmh: 'km/h',
+          mph: 'mph'
+        };
+        return labels[unit] || 'kts';
+      }
+      
+      // Get speed unit label for display
+      function getSpeedUnitLabel(unit) {
+        const labels = {
+          mph: 'mph',
+          kmh: 'km/h',
+          ms: 'm/s'
+        };
+        return labels[unit] || 'mph';
+      }
+      
+      // Map to store relationship between user-friendly display IDs (1, 2, 3...) and actual UUIDs
+      // This hides complex UUIDs from the user while maintaining backend compatibility
+      let sessionIdMap = new Map();
+
+      // Event listener for fetching and displaying all sessions
+      document
+        .getElementById("fetch-btn")
+        .addEventListener("click", async () => {
+          const output = document.getElementById("output");
+          output.classList.add("visible");
+          output.textContent = "Fetching data...";
+          try {
+            // GET request to fetch all sessions from the API
+            const res = await fetch("http://localhost:3000/sessions", {
+              credentials: 'include'
+            });
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            const data = await res.json();
+            
+            // Handle empty session list
+            if (data.length === 0) {
+              output.innerHTML = "<p>No sessions yet.</p>";
+              return;
+            }
+            
+            // Clear the ID map and rebuild it with fresh data
+            sessionIdMap.clear();
+            
+            // Build HTML table to display sessions
+            let html = `<table class="sessions-table">
+              <thead>
+                <tr>
+                  <th>Session ID</th>
+                  <th>Date</th>
+                  <th>Location</th>
+                  <th>Kite</th>
+                  <th>Board</th>
+                  <th>Session Type</th>
+                  <th>Duration</th>
+                  <th>Wind Speed</th>
+                  <th>Wind Dir</th>
+                  <th>Max Jump</th>
+                  <th>Max Speed</th>
+                  <th>Jump Distance</th>
+                  <th>Max Airtime</th>
+                </tr>
+                <tr>
+                  <th><input type="text" id="filter-id" placeholder="Filter..." style="width:80px;"></th>
+                  <th>
+                    <select id="filter-date" style="width:100px;">
+                      <option value="">All</option>
+                      <option value="oldest">Oldest</option>
+                      <option value="newest">Newest</option>
+                    </select>
+                  </th>
+                  <th><input type="text" id="filter-location" placeholder="Filter..." style="width:120px;"></th>
+                  <th><input type="text" id="filter-kite" placeholder="Filter..." style="width:120px;"></th>
+                  <th><input type="text" id="filter-board" placeholder="Filter..." style="width:120px;"></th>
+                  <th><input type="text" id="filter-type" placeholder="Filter..." style="width:100px;"></th>
+                  <th>
+                    <select id="filter-duration" style="width:80px;">
+                      <option value="">All</option>
+                      <option value="highest">Highest</option>
+                      <option value="lowest">Lowest</option>
+                    </select>
+                  </th>
+                  <th>
+                    <select id="filter-wind-speed" style="width:100px;">
+                      <option value="">All</option>
+                      <option value="highest">Highest</option>
+                      <option value="lowest">Lowest</option>
+                    </select>
+                  </th>
+                  <th><input type="text" id="filter-wind-dir" placeholder="Filter..." style="width:100px;"></th>
+                  <th>
+                    <select id="filter-jump" style="width:80px;">
+                      <option value="">All</option>
+                      <option value="highest">Highest</option>
+                      <option value="lowest">Lowest</option>
+                    </select>
+                  </th>
+                  <th>
+                    <select id="filter-max-speed" style="width:100px;">
+                      <option value="">All</option>
+                      <option value="highest">Highest</option>
+                      <option value="lowest">Lowest</option>
+                    </select>
+                  </th>
+                  <th>
+                    <select id="filter-jump-dist" style="width:100px;">
+                      <option value="">All</option>
+                      <option value="highest">Highest</option>
+                      <option value="lowest">Lowest</option>
+                    </select>
+                  </th>
+                  <th>
+                    <select id="filter-airtime" style="width:100px;">
+                      <option value="">All</option>
+                      <option value="highest">Highest</option>
+                      <option value="lowest">Lowest</option>
+                    </select>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="sessions-tbody">`;
+            data.forEach((session, index) => {
+              // Create simple sequential display ID (1, 2, 3...)
+              const displayId = index + 1;
+              // Map the display ID to the real UUID for later use
+              sessionIdMap.set(displayId, session.id);
+              
+              const windSpeedDisplay = session.wind_speed ? `${session.wind_speed} ${getWindUnitLabel(currentWindUnit)}` : '-';
+              const maxJumpDisplay = session.max_jump ? `${session.max_jump}m` : '-';
+              const maxSpeedDisplay = session.max_speed ? `${session.max_speed} ${getSpeedUnitLabel(currentSpeedUnit)}` : '-';
+              const maxJumpDistanceDisplay = session.max_jump_distance ? `${session.max_jump_distance}m` : '-';
+              const maxAirtimeDisplay = session.max_airtime ? `${session.max_airtime}s` : '-';
+              
+              html += `<tr>
+                <td>${displayId}</td>
+                <td>${session.date ? new Date(session.date).toLocaleDateString('en-GB') : '-'}</td>
+                <td>📍 ${session.location}</td>
+                <td>${session.kite}</td>
+                <td>${session.board}</td>
+                <td>${session.session_type}</td>
+                <td>${session.duration || '-'}</td>
+                <td>${windSpeedDisplay}</td>
+                <td>${session.wind_direction || '-'}</td>
+                <td>${maxJumpDisplay}</td>
+                <td>${maxSpeedDisplay}</td>
+                <td>${maxJumpDistanceDisplay}</td>
+                <td>${maxAirtimeDisplay}</td>
+              </tr>`;
+            });
+            html += '</tbody></table>';
+            output.innerHTML = html;
+            
+            // Add filter functionality
+            setupTableFilters();
+          } catch (err) {
+            // Display error message if fetch fails
+            output.textContent =
+              "❌ Could not reach backend (" + err.message + ")";
+          }
+        });
+
+      // Table filter functionality
+      function setupTableFilters() {
+        const textFilters = {
+          'filter-id': 0,
+          'filter-location': 2,
+          'filter-kite': 3,
+          'filter-board': 4,
+          'filter-type': 5,
+          'filter-wind-dir': 8
+        };
+        
+        const sortFilters = {
+          'filter-date': { column: 1, type: 'date' },
+          'filter-duration': { column: 6, type: 'time' },
+          'filter-wind-speed': { column: 7, type: 'numeric' },
+          'filter-jump': { column: 9, type: 'numeric' },
+          'filter-max-speed': { column: 10, type: 'numeric' },
+          'filter-jump-dist': { column: 11, type: 'numeric' },
+          'filter-airtime': { column: 12, type: 'numeric' }
+        };
+
+        // Text filter handlers
+        Object.keys(textFilters).forEach(filterId => {
+          const filterInput = document.getElementById(filterId);
+          if (filterInput) {
+            filterInput.addEventListener('keyup', function() {
+              const columnIndex = textFilters[filterId];
+              const filterValue = this.value.toLowerCase();
+              const tbody = document.getElementById('sessions-tbody');
+              const rows = tbody.getElementsByTagName('tr');
+
+              for (let row of rows) {
+                const cell = row.getElementsByTagName('td')[columnIndex];
+                if (cell) {
+                  const textValue = cell.textContent || cell.innerText;
+                  row.style.display = textValue.toLowerCase().indexOf(filterValue) > -1 ? '' : 'none';
+                }
+              }
+            });
+          }
+        });
+        
+        // Sort filter handlers
+        Object.keys(sortFilters).forEach(filterId => {
+          const filterSelect = document.getElementById(filterId);
+          if (filterSelect) {
+            filterSelect.addEventListener('change', function() {
+              const config = sortFilters[filterId];
+              const sortValue = this.value;
+              const tbody = document.getElementById('sessions-tbody');
+              const rows = Array.from(tbody.getElementsByTagName('tr'));
+              
+              if (!sortValue) {
+                // Reset to original order (by session ID)
+                rows.sort((a, b) => {
+                  const idA = parseInt(a.getElementsByTagName('td')[0].textContent);
+                  const idB = parseInt(b.getElementsByTagName('td')[0].textContent);
+                  return idA - idB;
+                });
+              } else {
+                rows.sort((a, b) => {
+                  const cellA = a.getElementsByTagName('td')[config.column];
+                  const cellB = b.getElementsByTagName('td')[config.column];
+                  
+                  let valA = cellA ? cellA.textContent.trim() : '';
+                  let valB = cellB ? cellB.textContent.trim() : '';
+                  
+                  // Handle empty/dash values
+                  if (valA === '-') valA = sortValue === 'lowest' || sortValue === 'oldest' ? Infinity : -Infinity;
+                  if (valB === '-') valB = sortValue === 'lowest' || sortValue === 'oldest' ? Infinity : -Infinity;
+                  
+                  if (config.type === 'date') {
+                    // Parse DD/MM/YYYY format
+                    const parseDate = (str) => {
+                      if (str === Infinity || str === -Infinity) return str;
+                      const parts = str.split('/');
+                      return new Date(parts[2], parts[1] - 1, parts[0]).getTime();
+                    };
+                    valA = parseDate(valA);
+                    valB = parseDate(valB);
+                    return sortValue === 'oldest' ? valA - valB : valB - valA;
+                  } else if (config.type === 'time') {
+                    // Parse HH:MM format to minutes
+                    const parseTime = (str) => {
+                      if (str === Infinity || str === -Infinity) return str;
+                      const parts = str.split(':');
+                      return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                    };
+                    valA = parseTime(valA);
+                    valB = parseTime(valB);
+                    return sortValue === 'lowest' ? valA - valB : valB - valA;
+                  } else if (config.type === 'numeric') {
+                    // Remove units and parse number
+                    if (valA !== Infinity && valA !== -Infinity) valA = parseFloat(valA.replace(/[^0-9.]/g, ''));
+                    if (valB !== Infinity && valB !== -Infinity) valB = parseFloat(valB.replace(/[^0-9.]/g, ''));
+                    return sortValue === 'lowest' ? valA - valB : valB - valA;
+                  }
+                  return 0;
+                });
+              }
+              
+              // Re-append sorted rows
+              rows.forEach(row => tbody.appendChild(row));
+            });
+          }
+        });
+      }
+
+      // Event listener for adding a new session
+      document
+        .getElementById("add-session-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const form = e.target;
+          // Collect form data
+          const data = {
+            location: form.location.value,
+            date: form.date.value,
+            kite: form.kite.value,
+            board: form.board.value,
+            session_type: form.session_type.value,
+            duration: form.duration.value,
+            max_jump: form.max_jump.value ? Number(form.max_jump.value) : undefined,
+            wind_direction: form.wind_direction.value || undefined,
+            wind_speed: form.wind_speed.value ? Number(form.wind_speed.value) : undefined,
+            max_speed: form.max_speed.value ? Number(form.max_speed.value) : undefined,
+            max_jump_distance: form.max_jump_distance.value ? Number(form.max_jump_distance.value) : undefined,
+            max_airtime: form.max_airtime.value ? Number(form.max_airtime.value) : undefined,
+          };
+          try {
+            // POST request to create new session
+            const res = await fetch("http://localhost:3000/sessions", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: 'include',
+              body: JSON.stringify(data),
+            });
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            document.getElementById("add-session-message").textContent =
+              "✅ Session added!";
+            form.reset();
+            // Refresh the session list to show the new session
+            document.getElementById("fetch-btn").click();
+          } catch (err) {
+            document.getElementById("add-session-message").textContent =
+              "❌ Error: " + err.message;
+          }
+        });
+
+        // Event listener for removing a session
+        document
+        .getElementById("remove-session-form")
+        .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const message = document.getElementById("remove-session-message");
+            message.textContent = "Removing session...";
+            
+            // Get the user-friendly display ID from the form
+            const displayId = Number(form.id.value);
+            // Look up the real UUID from our map
+            const realId = sessionIdMap.get(displayId);
+            
+            // Validate that the session number exists
+            if (!realId) {
+              message.textContent = "❌ Invalid session number. Please fetch sessions first to see valid IDs.";
+              return;
+            }
+            
+            try {
+            // DELETE request using the real UUID
+            const res = await fetch(`http://localhost:3000/sessions/${realId}`, {
+                method: "DELETE",
+                credentials: 'include',
+            });
+            if (!res.ok) {
+              const errorData = await res.json().catch(() => ({}));
+              throw new Error(errorData.error || "HTTP " + res.status);
+            }
+            message.textContent = "✅ Session removed!";
+            form.querySelector('[name="id"]').value = "";
+            // Refresh the session list to reflect the deletion
+            document.getElementById("fetch-btn").click();
+            } catch (err) {
+            message.textContent = "❌ Could not remove session (" + err.message + ")";
+            }
+        });
+    
+    // Event listener for updating an existing session
+    document
+      .getElementById("update-session-form")
+      .addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const message = document.getElementById("update-session-message");
+        message.textContent = "Updating session...";
+        
+        // Get the user-friendly display ID from the form
+        const displayId = Number(form.id.value);
+        // Look up the real UUID from our map
+        const realId = sessionIdMap.get(displayId);
+        
+        // Validate that the session number exists
+        if (!realId) {
+          message.textContent = "❌ Invalid session number";
+          return;
+        }
+        
+        // Collect only the fields that have values
+        const data = {};
+        if (form.location.value.trim()) {
+          data.location = form.location.value;
+        }
+        if (form.date.value) {
+          data.date = form.date.value;
+        }
+        if (form.kite.value.trim()) {
+          data.kite = form.kite.value;
+        }
+        if (form.board.value) {
+          data.board = form.board.value;
+        }
+        if (form.session_type.value) {
+          data.session_type = form.session_type.value;
+        }
+        if (form.duration.value) {
+          data.duration = form.duration.value;
+        }
+        if (form.max_jump.value) {
+          data.max_jump = Number(form.max_jump.value);
+        }
+        if (form.wind_direction.value) {
+          data.wind_direction = form.wind_direction.value;
+        }
+        if (form.wind_speed.value) {
+          data.wind_speed = Number(form.wind_speed.value);
+        }
+        if (form.max_speed.value) {
+          data.max_speed = Number(form.max_speed.value);
+        }
+        if (form.max_jump_distance.value) {
+          data.max_jump_distance = Number(form.max_jump_distance.value);
+        }
+        if (form.max_airtime.value) {
+          data.max_airtime = Number(form.max_airtime.value);
+        }
+        
+        // Check if at least one field is being updated
+        if (Object.keys(data).length === 0) {
+          message.textContent = "❌ Please enter at least one field to update";
+          return;
+        }
+        
+        try {
+          // PUT request to update session using the real UUID
+          const res = await fetch(`http://localhost:3000/sessions/${realId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+            body: JSON.stringify(data),
+          });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          message.textContent = "✅ Session updated!";
+          form.reset();
+          // Refresh the session list to show the updated data
+          document.getElementById("fetch-btn").click();
+        } catch (err) {
+          message.textContent = "❌ Could not update session (" + err.message + ")";
+        }
+      });
+    </script>
+  </body>
+</html>

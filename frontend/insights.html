@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Insights - Session Tracker</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Top right hamburger menu -->
+    <div style="position: absolute; top: 1rem; right: 1rem; z-index: 100;">
+      <button id="hamburger-btn" style="background: var(--bg-card); border: 1px solid var(--border); padding: 0.7rem; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; width: 40px; height: 40px; justify-content: center; align-items: center;">
+        <span style="display: block; width: 20px; height: 2px; background: var(--text-primary); transition: 0.3s;"></span>
+        <span style="display: block; width: 20px; height: 2px; background: var(--text-primary); transition: 0.3s;"></span>
+        <span style="display: block; width: 20px; height: 2px; background: var(--text-primary); transition: 0.3s;"></span>
+      </button>
+      
+      <!-- Dropdown menu -->
+      <div id="menu-dropdown" style="display: none; position: absolute; top: 50px; right: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; min-width: 180px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+        <button id="sessions-btn" style="width: 100%; padding: 0.8rem 1rem; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; border-bottom: 1px solid var(--border); border-radius: 12px 12px 0 0;">
+          <span style="font-size: 1.2em;">📊</span> Sessions
+        </button>
+        <button id="settings-btn" style="width: 100%; padding: 0.8rem 1rem; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; border-bottom: 1px solid var(--border);">
+          <span style="font-size: 1.2em;">⚙️</span> Settings
+        </button>
+        <button id="about-btn" style="width: 100%; padding: 0.8rem 1rem; background: none; border: none; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; border-radius: 0 0 12px 12px;">
+          <span style="font-size: 1.2em;">ℹ️</span> About
+        </button>
+      </div>
+    </div>
+    
+    
+    <div class="container">
+      <h1>Insights</h1>
+      
+      <div id="loading" style="text-align: center; margin-top: 4rem; color: var(--text-secondary);">
+        <p style="font-size: 1.2rem;">Loading insights...</p>
+      </div>
+      
+      <div id="insights-content" style="display: none;">
+        <!-- Key Stats Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          <div id="highest-jump-tile" style="background: linear-gradient(135deg, var(--primary), #3b82f6); padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
+            <h3 style="margin: 0 0 0.5rem 0; color: white; opacity: 0.9; font-size: 0.9rem;">Highest Jump</h3>
+            <p id="highest-jump" style="margin: 0; font-size: 2.5rem; font-weight: 700; color: white;">-</p>
+          </div>
+          
+          <div style="background: linear-gradient(135deg, var(--success), #059669); padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <h3 style="margin: 0 0 0.5rem 0; color: white; opacity: 0.9; font-size: 0.9rem;">Total Sessions</h3>
+            <p id="total-sessions" style="margin: 0; font-size: 2.5rem; font-weight: 700; color: white;">-</p>
+          </div>
+          
+          <div style="background: linear-gradient(135deg, var(--warning), #f97316); padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <h3 style="margin: 0 0 0.5rem 0; color: white; opacity: 0.9; font-size: 0.9rem;">Total Time</h3>
+            <p id="total-time" style="margin: 0; font-size: 2.5rem; font-weight: 700; color: white;">-</p>
+          </div>
+        </div>
+        
+        <!-- Session Details Card (Hidden by default) -->
+        <div id="session-details" style="display: none; background: var(--bg-card); padding: 2rem; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 2rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="margin: 0; color: var(--text-primary); font-size: 1.3rem;">Session Details - Highest Jump</h2>
+            <button id="close-details" style="background: var(--bg-main); border: 1px solid var(--border); color: var(--text-primary); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">✕ Close</button>
+          </div>
+          <div id="session-details-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;"></div>
+        </div>
+        
+        <!-- Location Details Card (Hidden by default) -->
+        <div id="location-details" style="display: none; background: var(--bg-card); padding: 2rem; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 2rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 id="location-details-title" style="margin: 0; color: var(--text-primary); font-size: 1.3rem;">Location Statistics</h2>
+            <button id="close-location-details" style="background: var(--bg-main); border: 1px solid var(--border); color: var(--text-primary); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">✕ Close</button>
+          </div>
+          <div id="location-details-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;"></div>
+        </div>
+        
+        <!-- Charts Section -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+          <!-- Pie Chart - Kite Usage -->
+          <div style="background: var(--bg-card); padding: 2rem; border-radius: 16px; border: 1px solid var(--border);">
+            <h2 style="margin: 0 0 1.5rem 0; color: var(--text-primary); font-size: 1.3rem;">Time by Kite</h2>
+            <div style="position: relative; height: 300px; display: flex; justify-content: center; align-items: center;">
+              <canvas id="kite-chart"></canvas>
+            </div>
+            <div id="kite-legend" style="margin-top: 1.5rem;"></div>
+          </div>
+          
+          <!-- Sessions by Location -->
+          <div style="background: var(--bg-card); padding: 2rem; border-radius: 16px; border: 1px solid var(--border);">
+            <h2 style="margin: 0 0 1.5rem 0; color: var(--text-primary); font-size: 1.3rem;">Sessions by Location</h2>
+            <div id="location-stats" style="max-height: 350px; overflow-y: auto;"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="no-data" style="display: none; text-align: center; margin-top: 4rem; color: var(--text-secondary);">
+        <p style="font-size: 1.2rem;">No sessions found</p>
+        <p style="margin-top: 1rem;">Log your first session to see insights!</p>
+      </div>
+    </div>
+
+    <script>
+      // Hamburger menu toggle
+      const hamburgerBtn = document.getElementById("hamburger-btn");
+      const menuDropdown = document.getElementById("menu-dropdown");
+      
+      hamburgerBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menuDropdown.style.display = menuDropdown.style.display === "none" ? "block" : "none";
+      });
+      
+      // Close menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!hamburgerBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
+          menuDropdown.style.display = "none";
+        }
+      });
+
+      // Sessions button handler
+      document.getElementById("sessions-btn").addEventListener("click", () => {
+        window.location.href = "/index.html";
+      });
+
+      // Settings button handler
+      document.getElementById("settings-btn").addEventListener("click", () => {
+        window.location.href = "/settings.html";
+      });
+
+      // About button handler
+      document.getElementById("about-btn").addEventListener("click", () => {
+        window.location.href = "/about.html";
+      });
+      
+      // Fetch and display insights
+      async function loadInsights() {
+        try {
+          const res = await fetch("http://localhost:3000/sessions", {
+            credentials: 'include'
+          });
+          
+          if (!res.ok) {
+            throw new Error("Failed to fetch sessions");
+          }
+          
+          const sessions = await res.json();
+          
+          document.getElementById("loading").style.display = "none";
+          
+          if (sessions.length === 0) {
+            document.getElementById("no-data").style.display = "block";
+            return;
+          }
+          
+          document.getElementById("insights-content").style.display = "block";
+          
+          // Calculate insights
+          calculateInsights(sessions);
+          
+        } catch (err) {
+          console.error("Failed to load insights:", err);
+          document.getElementById("loading").innerHTML = `<p style="color: var(--error);">Failed to load insights</p>`;
+        }
+      }
+      
+      let allSessions = []; // Store sessions globally for click handler
+      
+      function calculateInsights(sessions) {
+        allSessions = sessions; // Store for later use
+        
+        // 1. Highest Jump
+        const validJumps = sessions.map(s => parseFloat(s.max_jump)).filter(j => !isNaN(j) && j > 0);
+        const highestJump = validJumps.length > 0 ? Math.max(...validJumps) : 0;
+        document.getElementById("highest-jump").textContent = highestJump.toFixed(1) + "m";
+        
+        // Find the session with the highest jump
+        const highestJumpSession = sessions.find(s => parseFloat(s.max_jump) === highestJump);
+        
+        // Add click handler to highest jump tile
+        const highestJumpTile = document.getElementById("highest-jump-tile");
+        highestJumpTile.onclick = () => {
+          if (highestJumpSession) {
+            showSessionDetails(highestJumpSession);
+          }
+        };
+        
+        // 2. Total Sessions
+        document.getElementById("total-sessions").textContent = sessions.length;
+        
+        // 3. Total Time
+        let totalMinutes = 0;
+        sessions.forEach(session => {
+          const [hours, minutes] = session.duration.split(':').map(Number);
+          totalMinutes += (hours * 60) + minutes;
+        });
+        const totalHours = Math.floor(totalMinutes / 60);
+        const remainingMinutes = totalMinutes % 60;
+        document.getElementById("total-time").textContent = `${totalHours}h ${remainingMinutes}m`;
+        
+        // 4. Sessions by Location
+        const locationCounts = {};
+        const locationMaxJumps = {};
+        sessions.forEach(session => {
+          locationCounts[session.location] = (locationCounts[session.location] || 0) + 1;
+          const currentMax = locationMaxJumps[session.location] || 0;
+          const jump = parseFloat(session.max_jump);
+          if (!isNaN(jump) && jump > 0) {
+            locationMaxJumps[session.location] = Math.max(currentMax, jump);
+          }
+        });
+        
+        const locationStatsHTML = Object.entries(locationCounts)
+          .sort((a, b) => b[1] - a[1])
+          .map(([location, count]) => {
+            const percentage = ((count / sessions.length) * 100).toFixed(1);
+            const maxJump = locationMaxJumps[location] ? locationMaxJumps[location].toFixed(1) : '0.0';
+            return `
+              <div style="margin-bottom: 1rem; cursor: pointer; transition: all 0.2s;" 
+                   onmouseover="this.style.opacity='0.8';" 
+                   onmouseout="this.style.opacity='1';"
+                   onclick="showLocationDetails('${location.replace(/'/g, "\\'")}')">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                  <span style="color: var(--text-primary); font-weight: 600;">📍 ${location}</span>
+                  <span style="color: var(--text-secondary);">${count} sessions (${percentage}%) • Max: ${maxJump}m</span>
+                </div>
+                <div style="background: var(--bg-main); height: 8px; border-radius: 4px; overflow: hidden;">
+                  <div style="background: linear-gradient(135deg, var(--primary), #3b82f6); height: 100%; width: ${percentage}%; transition: width 0.3s;"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        
+        document.getElementById("location-stats").innerHTML = locationStatsHTML;
+        
+        // 5. Time by Kite - Pie Chart
+        const kiteTime = {};
+        sessions.forEach(session => {
+          const [hours, minutes] = session.duration.split(':').map(Number);
+          const sessionMinutes = (hours * 60) + minutes;
+          kiteTime[session.kite] = (kiteTime[session.kite] || 0) + sessionMinutes;
+        });
+        
+        drawPieChart(kiteTime, totalMinutes);
+      }
+      
+      function drawPieChart(kiteTime, totalMinutes) {
+        const canvas = document.getElementById("kite-chart");
+        const ctx = canvas.getContext("2d");
+        
+        // Set canvas size
+        canvas.width = 300;
+        canvas.height = 300;
+        
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = 120;
+        
+        // Sort by time and prepare data
+        const sortedKites = Object.entries(kiteTime).sort((a, b) => b[1] - a[1]);
+        
+        // Color palette
+        const colors = [
+          '#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316',
+          '#eab308', '#22c55e', '#10b981', '#14b8a6', '#06b6d4',
+          '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7'
+        ];
+        
+        let currentAngle = -Math.PI / 2; // Start at top
+        
+        sortedKites.forEach(([kite, minutes], index) => {
+          const percentage = minutes / totalMinutes;
+          const sliceAngle = percentage * 2 * Math.PI;
+          
+          // Draw slice
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+          ctx.closePath();
+          ctx.fillStyle = colors[index % colors.length];
+          ctx.fill();
+          
+          // Add border
+          ctx.strokeStyle = '#1a1a2e';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          
+          currentAngle += sliceAngle;
+        });
+        
+        // Draw center circle (donut effect)
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius * 0.5, 0, 2 * Math.PI);
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fill();
+        
+        // Create legend
+        const legendHTML = sortedKites.map(([kite, minutes], index) => {
+          const hours = Math.floor(minutes / 60);
+          const mins = minutes % 60;
+          const percentage = ((minutes / totalMinutes) * 100).toFixed(1);
+          const timeStr = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+          
+          return `
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <div style="width: 16px; height: 16px; border-radius: 4px; background: ${colors[index % colors.length]}; flex-shrink: 0;"></div>
+              <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: var(--text-primary); font-weight: 600;">${kite}</span>
+                  <span style="color: var(--text-secondary); font-size: 0.9rem;">${percentage}%</span>
+                </div>
+                <div style="color: var(--text-muted); font-size: 0.85rem;">${timeStr}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+        document.getElementById("kite-legend").innerHTML = legendHTML;
+      }
+      
+      // Show session details in a card
+      function showSessionDetails(session) {
+        const detailsCard = document.getElementById("session-details");
+        const detailsContent = document.getElementById("session-details-content");
+        
+        const formatDate = (dateStr) => {
+          if (!dateStr) return '-';
+          return new Date(dateStr).toLocaleDateString('en-GB', { 
+            day: 'numeric', 
+            month: 'long', 
+            year: 'numeric' 
+          });
+        };
+        
+        const detailItems = [
+          { label: 'Date', value: formatDate(session.date), icon: '📅' },
+          { label: 'Location', value: session.location || '-', icon: '📍' },
+          { label: 'Kite', value: session.kite || '-', icon: '🪁' },
+          { label: 'Board', value: session.board || '-', icon: '🏄' },
+          { label: 'Session Type', value: session.session_type || '-', icon: '🎯' },
+          { label: 'Duration', value: session.duration || '-', icon: '⏱️' },
+          { label: 'Max Jump', value: session.max_jump ? `${session.max_jump}m` : '-', icon: '🚀' },
+          { label: 'Wind Speed', value: session.wind_speed ? `${session.wind_speed} kts` : '-', icon: '💨' },
+          { label: 'Wind Direction', value: session.wind_direction || '-', icon: '🧭' },
+          { label: 'Max Speed', value: session.max_speed ? `${session.max_speed} mph` : '-', icon: '⚡' },
+          { label: 'Jump Distance', value: session.max_jump_distance ? `${session.max_jump_distance}m` : '-', icon: '📏' },
+          { label: 'Max Airtime', value: session.max_airtime ? `${session.max_airtime}s` : '-', icon: '⏰' }
+        ];
+        
+        const html = detailItems.map(item => `
+          <div style="background: var(--bg-main); padding: 1rem; border-radius: 12px; border: 1px solid var(--border);">
+            <div style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.3rem;">
+              <span style="margin-right: 0.3rem;">${item.icon}</span>${item.label}
+            </div>
+            <div style="color: var(--text-primary); font-size: 1.1rem; font-weight: 600;">${item.value}</div>
+          </div>
+        `).join('');
+        
+        detailsContent.innerHTML = html;
+        detailsCard.style.display = 'block';
+        
+        // Scroll to the details card
+        detailsCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      
+      // Show location statistics
+      function showLocationDetails(locationName) {
+        // Filter sessions for this location
+        const locationSessions = allSessions.filter(s => s.location === locationName);
+        
+        if (locationSessions.length === 0) return;
+        
+        // Calculate statistics
+        const windSpeeds = locationSessions
+          .map(s => parseFloat(s.wind_speed))
+          .filter(w => !isNaN(w) && w > 0);
+        
+        const maxWindSpeed = windSpeeds.length > 0 ? Math.max(...windSpeeds) : 0;
+        const minWindSpeed = windSpeeds.length > 0 ? Math.min(...windSpeeds) : 0;
+        const avgWindSpeed = windSpeeds.length > 0 
+          ? (windSpeeds.reduce((a, b) => a + b, 0) / windSpeeds.length).toFixed(1) 
+          : 0;
+        
+        // Calculate most common wind direction
+        const windDirections = {};
+        locationSessions.forEach(s => {
+          if (s.wind_direction) {
+            windDirections[s.wind_direction] = (windDirections[s.wind_direction] || 0) + 1;
+          }
+        });
+        
+        const mostCommonDirection = Object.entries(windDirections).length > 0
+          ? Object.entries(windDirections).sort((a, b) => b[1] - a[1])[0][0]
+          : 'N/A';
+        
+        // Calculate other stats
+        const jumps = locationSessions
+          .map(s => parseFloat(s.max_jump))
+          .filter(j => !isNaN(j) && j > 0);
+        
+        const maxJump = jumps.length > 0 ? Math.max(...jumps).toFixed(1) : '0.0';
+        const avgJump = jumps.length > 0 
+          ? (jumps.reduce((a, b) => a + b, 0) / jumps.length).toFixed(1)
+          : '0.0';
+        
+        // Calculate total time at location
+        let totalMinutes = 0;
+        locationSessions.forEach(session => {
+          const [hours, minutes] = session.duration.split(':').map(Number);
+          totalMinutes += (hours * 60) + minutes;
+        });
+        const totalHours = Math.floor(totalMinutes / 60);
+        const remainingMinutes = totalMinutes % 60;
+        const totalTimeStr = `${totalHours}h ${remainingMinutes}m`;
+        
+        // Session types breakdown
+        const sessionTypes = {};
+        locationSessions.forEach(s => {
+          sessionTypes[s.session_type] = (sessionTypes[s.session_type] || 0) + 1;
+        });
+        const mostCommonType = Object.entries(sessionTypes).length > 0
+          ? Object.entries(sessionTypes).sort((a, b) => b[1] - a[1])[0][0]
+          : 'N/A';
+        
+        // Build detail items
+        const detailItems = [
+          { label: 'Total Sessions', value: locationSessions.length.toString(), icon: '📊' },
+          { label: 'Total Time', value: totalTimeStr, icon: '⏱️' },
+          { label: 'Max Wind Speed', value: `${maxWindSpeed} kts`, icon: '💨' },
+          { label: 'Min Wind Speed', value: `${minWindSpeed} kts`, icon: '🍃' },
+          { label: 'Avg Wind Speed', value: `${avgWindSpeed} kts`, icon: '🌬️' },
+          { label: 'Most Common Direction', value: mostCommonDirection, icon: '🧭' },
+          { label: 'Max Jump', value: `${maxJump}m`, icon: '🚀' },
+          { label: 'Avg Jump', value: `${avgJump}m`, icon: '📈' },
+          { label: 'Most Common Type', value: mostCommonType, icon: '🎯' }
+        ];
+        
+        const html = detailItems.map(item => `
+          <div style="background: var(--bg-main); padding: 1rem; border-radius: 12px; border: 1px solid var(--border);">
+            <div style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.3rem;">
+              <span style="margin-right: 0.3rem;">${item.icon}</span>${item.label}
+            </div>
+            <div style="color: var(--text-primary); font-size: 1.1rem; font-weight: 600;">${item.value}</div>
+          </div>
+        `).join('');
+        
+        const locationDetailsCard = document.getElementById("location-details");
+        const locationDetailsTitle = document.getElementById("location-details-title");
+        const locationDetailsContent = document.getElementById("location-details-content");
+        
+        locationDetailsTitle.textContent = `Location Statistics - ${locationName}`;
+        locationDetailsContent.innerHTML = html;
+        locationDetailsCard.style.display = 'block';
+        
+        // Scroll to the details card
+        locationDetailsCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      
+      // Close button handler
+      document.getElementById("close-details").addEventListener("click", () => {
+        document.getElementById("session-details").style.display = "none";
+      });
+      
+      // Close location details button handler
+      document.getElementById("close-location-details").addEventListener("click", () => {
+        document.getElementById("location-details").style.display = "none";
+      });
+      
+      // Load insights on page load
+      loadInsights();
+    </script>
+  </body>
+</html>
