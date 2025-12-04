@@ -332,21 +332,30 @@ For professional-looking builds, add application icons:
 
 You can use tools like `electron-icon-builder` or online converters to create these from a single PNG.
 
-## Future Enhancements
-
-Potential features for future development:
-- Export sessions to CSV/JSON
-- Import sessions from file
-- Session photos/media
-- Weather data integration
-- Multi-user support with authentication
-- Mobile app version
-- Desktop app packaging (Electron)
-- Session comparison tools
-- Progress tracking over time
-- Gear usage analytics
 
 ## License
 
 ISC
+
+## Contributing
+
+### Development Workflow
+
+**Please do not push directly to the `main` branch.**
+
+Instead, follow this workflow:
+1. Create a feature branch: `git checkout -b feature/your-feature-name`
+2. Make your changes and commit them
+3. Push your branch: `git push origin feature/your-feature-name`
+4. Open a Pull Request on GitHub for review
+
+This ensures:
+- Code review before merging
+- Clean commit history
+- Easier rollback if needed
+- Better collaboration
+
+### Reporting Issues
+
+Found a bug or have a feature request? Please [open an issue](https://github.com/stuskeer/Sessions/issues) on GitHub.
 
