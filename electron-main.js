@@ -1,13 +1,15 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
-import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
+import express from 'express';
+import cors from 'cors';
+import Router from './views/router.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
-let serverProcess;
+let server;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -19,7 +21,7 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
     },
-    icon: path.join(__dirname, 'frontend/images/icon.png'), // Add an icon if you have one
+    icon: path.join(__dirname, 'frontend/images/icon.png'),
     title: 'Kitesurf Session Tracker'
   });
 
@@ -29,7 +31,7 @@ function createWindow() {
   // Load the app after server starts
   setTimeout(() => {
     mainWindow.loadURL('http://localhost:3000');
-  }, 2000);
+  }, 1500);
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -37,23 +39,28 @@ function createWindow() {
 }
 
 function startServer() {
-  // Start the Express server as a child process
-  const serverPath = path.join(__dirname, 'index.js');
-  serverProcess = spawn('node', [serverPath], {
-    cwd: __dirname,
-    env: { ...process.env, ELECTRON_MODE: 'true' }
+  const port = 3000;
+  const expressApp = express();
+
+  expressApp.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+  }));
+  expressApp.use(express.json());
+
+  // Serve static files from frontend directory
+  expressApp.use(express.static(path.join(__dirname, 'frontend')));
+
+  // Redirect root to main page
+  expressApp.get('/', (req, res) => {
+    res.redirect('/index.html');
   });
 
-  serverProcess.stdout.on('data', (data) => {
-    console.log(`Server: ${data}`);
-  });
+  expressApp.use(Router);
 
-  serverProcess.stderr.on('data', (data) => {
-    console.error(`Server Error: ${data}`);
-  });
-
-  serverProcess.on('close', (code) => {
-    console.log(`Server process exited with code ${code}`);
+  server = expressApp.listen(port, () => {
+    console.log(`🤖 Server listening on Port: ${port}`);
+    console.log('Running in Electron mode');
   });
 }
 
@@ -63,9 +70,9 @@ app.on('ready', () => {
 });
 
 app.on('window-all-closed', () => {
-  // Kill server process
-  if (serverProcess) {
-    serverProcess.kill();
+  // Close server
+  if (server) {
+    server.close();
   }
   
   if (process.platform !== 'darwin') {
@@ -79,9 +86,8 @@ app.on('activate', () => {
   }
 });
 
-// Clean up server on app quit
-app.on('quit', () => {
-  if (serverProcess) {
-    serverProcess.kill();
+app.on('before-quit', () => {
+  if (server) {
+    server.close();
   }
 });

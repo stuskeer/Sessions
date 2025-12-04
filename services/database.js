@@ -1,12 +1,27 @@
 import Database from 'better-sqlite3';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { app } from 'electron';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Create database file in the project root
-const dbPath = join(__dirname, '..', 'kitesessions.db');
+// Determine database path based on whether running in Electron or standalone
+let dbPath;
+if (process.versions.electron) {
+  // In Electron, use user data directory (writable location)
+  const userDataPath = app.getPath('userData');
+  // Ensure directory exists
+  if (!fs.existsSync(userDataPath)) {
+    fs.mkdirSync(userDataPath, { recursive: true });
+  }
+  dbPath = join(userDataPath, 'kitesessions.db');
+} else {
+  // Fallback for development/testing outside Electron
+  dbPath = join(__dirname, '..', 'kitesessions.db');
+}
+
 const db = new Database(dbPath);
 
 // Enable foreign keys and WAL mode for better performance
