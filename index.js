@@ -23,7 +23,12 @@ app.use(Router);
 
 async function startServer() {
   try {
-    app.listen(port, () => console.log(`🤖 Listening on Port: ${port}`));
+    app.listen(port, () => {
+      console.log(`🤖 Listening on Port: ${port}`);
+      if (process.env.ELECTRON_MODE) {
+        console.log('Running in Electron mode');
+      }
+    });
   } catch (err) {
     console.log("🤖 Oh no something went wrong", err);
   }

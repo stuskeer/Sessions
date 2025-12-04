@@ -258,39 +258,52 @@ The application uses SQLite with two main tables:
 npm run dev
 ```
 
-This uses nodemon to automatically restart the server when files change.
+**Run the Electron app in development:**
+```bash
+npm run electron
+```
 
-### Building for Distribution
+**Electron dev mode** (auto-reload on file changes):
+```bash
+npm run electron-dev
+```
 
-To create a standalone executable for distribution:
+### Building Desktop Applications
 
-1. **Install pkg** (if not already installed):
-   ```bash
-   npm install -g pkg
-   ```
+The application uses Electron to create native desktop applications for all platforms.
 
-2. **Build executables** for your target platforms:
-   ```bash
-   pkg . --targets node18-win-x64,node18-macos-x64,node18-linux-x64
-   ```
+**Build for your current platform:**
+```bash
+npm run build
+```
 
-3. **Output**: Executables will be created in the project root:
-   - `Sessions-win.exe` (Windows)
-   - `Sessions-macos` (macOS)
-   - `Sessions-linux` (Linux)
+**Build for specific platforms:**
+```bash
+npm run build:mac    # macOS (.dmg and .zip)
+npm run build:win    # Windows (.exe installer and portable)
+npm run build:linux  # Linux (.AppImage and .deb)
+```
 
-4. **Distribution notes**:
-   - The SQLite database will be created automatically on first run
-   - Frontend files must be included alongside the executable
-   - Consider using tools like Electron for a more integrated desktop experience
+**Build for all platforms:**
+```bash
+npm run build:all
+```
 
-### Packaging with Electron (Future Enhancement)
+**Output files** will be in the `dist/` folder:
+- **macOS**: `.dmg` (installer) and `.zip` (portable)
+- **Windows**: `.exe` (NSIS installer) and portable `.exe`
+- **Linux**: `.AppImage` (portable) and `.deb` (Debian package)
 
-For a true desktop application experience:
-1. Wrap the Express server with Electron
-2. Bundle all assets and dependencies
-3. Create installers for each platform
-4. Add auto-update functionality
+**Note:** Building for macOS requires macOS, building for Windows works best on Windows (can use Wine on Mac/Linux), and Linux builds work on all platforms.
+
+### Icon Requirements
+
+For professional-looking builds, add application icons:
+- `frontend/images/icon.icns` (macOS) - 512x512 or 1024x1024
+- `frontend/images/icon.ico` (Windows) - multiple sizes embedded
+- `frontend/images/icon.png` (Linux) - 512x512
+
+You can use tools like `electron-icon-builder` or online converters to create these from a single PNG.
 
 ## Future Enhancements
 

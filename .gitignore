@@ -42,10 +42,16 @@ yarn-error.log*
 Thumbs.db
 ehthumbs.db
 
-# Build outputs (for pkg or electron)
+# Build outputs (for Electron)
 dist/
+out/
 build/
+release/
+*.dmg
 *.exe
+*.deb
+*.AppImage
+*.zip
 Sessions-*
 !Sessions/
 
