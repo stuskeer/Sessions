@@ -1,6 +1,6 @@
 # Kitesurf Session Tracker
 
-A web-based application for tracking and analyzing kitesurfing sessions. Built with Node.js, Express, and SQLite - no external database or authentication required.
+A desktop application for tracking and analyzing kitesurfing sessions. Built with Electron, Node.js, Express, and SQLite - no external database or authentication required.
 
 **Developed by:** Stuart Skeer  
 **Version:** 1.0.0  
@@ -65,6 +65,7 @@ A web-based application for tracking and analyzing kitesurfing sessions. Built w
 - Developer information
 
 ### User Experience
+- **Desktop Application**: Native app experience with Electron - no browser needed
 - **Single User**: No login required - designed for personal use
 - **Standalone**: All data stored locally in SQLite database
 - **Responsive UI**: Modern, clean interface with dark theme
@@ -74,10 +75,23 @@ A web-based application for tracking and analyzing kitesurfing sessions. Built w
 
 ## Installation
 
+### For End Users (Desktop App)
+
+**Download the installer for your platform** from the [Releases](https://github.com/stuskeer/Sessions/releases) page:
+- **macOS**: Download `.dmg` file, open and drag to Applications
+- **Windows**: Download and run `.exe` installer
+- **Linux**: Download `.AppImage` or `.deb` package
+
+The database will be created automatically on first run.
+
+### For Developers
+
 1. **Prerequisites**: Install Node.js (v14 or higher)
 
-2. **Install Dependencies**:
+2. **Clone and install dependencies**:
    ```bash
+   git clone https://github.com/stuskeer/Sessions.git
+   cd Sessions
    npm install
    ```
 
@@ -87,17 +101,26 @@ A web-based application for tracking and analyzing kitesurfing sessions. Built w
 
 ## Running the Application
 
-**Start the server**:
+**Run as desktop app (Electron)**:
+```bash
+npm run electron
+```
+
+**Development mode for desktop app** (auto-reload):
+```bash
+npm run electron-dev
+```
+
+**Run as web server only** (for development):
 ```bash
 npm start
 ```
+Then open `http://localhost:3000` in your browser.
 
-**Development mode** (with auto-reload):
+**Web server with auto-reload**:
 ```bash
 npm run dev
 ```
-
-The application will be available at **`http://localhost:3000`**
 
 ## Quick Start Guide
 
@@ -215,6 +238,7 @@ The application uses SQLite with two main tables:
 
 ## Technologies
 
+- **Desktop Framework**: Electron
 - **Backend**: Node.js, Express 5
 - **Database**: SQLite (better-sqlite3)
 - **Validation**: Joi
