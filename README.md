@@ -3,7 +3,7 @@
 A desktop application for tracking and analyzing kitesurfing sessions. Built with Electron, Node.js, Express, and SQLite - no external database or authentication required.
 
 **Developed by:** Stuart Skeer  
-**Version:** 1.0.0  
+**Version:** 1.0.0-beta  
 **Released:** December 2025
 
 ## Features
