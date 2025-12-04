@@ -82,7 +82,10 @@ A desktop application for tracking and analyzing kitesurfing sessions. Built wit
 - **Windows**: Download and run `.exe` installer
 - **Linux**: Download `.AppImage` or `.deb` package
 
-The database will be created automatically on first run.
+The database will be created automatically on first run in your system's user data directory:
+- **macOS**: `~/Library/Application Support/Session Tracker/kitesessions.db`
+- **Windows**: `%APPDATA%/Session Tracker/kitesessions.db`
+- **Linux**: `~/.config/Session Tracker/kitesessions.db`
 
 ### For Developers
 
